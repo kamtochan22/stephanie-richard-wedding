@@ -472,21 +472,27 @@ body.opened .opener-veil{opacity:0;visibility:hidden;pointer-events:none}
 
 /* --- body artwork (the flap area of this file is the envelope's interior) --- */
 /* specular sweep travelling across the blind embossing (idle) */
-.env-shine{
-  position:absolute;top:-35%;bottom:-35%;left:-62%;right:-62%;z-index:4;pointer-events:none;
-  background:linear-gradient(74deg,
-    rgba(255,236,180,0) 46.5%,rgba(255,232,170,.46) 48.6%,
-    rgba(255,242,198,.98) 50%,rgba(255,232,170,.46) 51.4%,rgba(255,236,180,0) 53.5%);
-  mix-blend-mode:screen;opacity:0;will-change:transform,opacity;
-  animation:shineSweep 7.5s ease-in-out infinite;
+.env-shine{                                 /* gold light travelling over the embossed relief */
+  position:absolute;inset:0;z-index:4;pointer-events:none;
+  background:linear-gradient(102deg,
+    rgba(255,206,124,0) 34%,rgba(255,220,150,.55) 45%,
+    rgba(255,242,204,.95) 50%,rgba(255,220,150,.55) 55%,rgba(255,206,124,0) 66%);
+  background-size:250% 250%;background-position:-70% -70%;
+  mix-blend-mode:screen;opacity:0;
+  -webkit-mask-image:url("textures/relief-mask.png");
+          mask-image:url("textures/relief-mask.png");
+  -webkit-mask-size:100% 100%;mask-size:100% 100%;
+  animation:glowSweep 8s ease-in-out infinite;
 }
-@keyframes shineSweep{
-  0%  {transform:translate(-44%,-16%);opacity:0}
-  7%  {opacity:.95}
-  27% {transform:translate(44%,16%);opacity:0}
-  100%{transform:translate(44%,16%);opacity:0}
+@keyframes glowSweep{
+  0%  {background-position:-70% -70%;opacity:0}
+  6%  {opacity:.62}
+  20% {opacity:.5}
+  36% {background-position:170% 170%;opacity:0}
+  100%{background-position:170% 170%;opacity:0}
 }
-body.opening .env-shine{animation:none;opacity:0;transition:opacity .3s}
+body.opening .env-shine{animation:glowBurst 1.7s ease-out .42s forwards}
+@keyframes glowBurst{0%{opacity:0;background-position:50% 50%}18%{opacity:.98}60%{opacity:.5}100%{opacity:0}}
 /* deep shade in the opening */
 .env-throat{
   position:absolute;inset:0;z-index:2;pointer-events:none;
@@ -579,6 +585,15 @@ body.opening .env-flap-wrap{animation:flapOpen 1.35s cubic-bezier(.32,.06,.28,1)
   transform:translateZ(.3px) rotateX(180deg);
   filter:drop-shadow(0 -2px 10px rgba(80,66,48,.22));
 }
+.env-flash{                                       /* full-frame bloom at the opening */
+  position:absolute;inset:0;z-index:9;pointer-events:none;opacity:0;
+  background:radial-gradient(72% 56% at 50% 47%,
+    rgba(255,253,246,.98) 0%,rgba(255,242,208,.86) 28%,
+    rgba(255,232,186,.34) 58%,rgba(255,228,180,0) 86%);
+  mix-blend-mode:screen;
+}
+body.opening .env-flash{animation:flashOut 2.2s cubic-bezier(.2,.7,.3,1) .42s forwards}
+@keyframes flashOut{0%{opacity:0}16%{opacity:.92}46%{opacity:.5}100%{opacity:0}}
 .env-cast{                                         /* flap's shadow on the body */
   position:absolute;left:0;right:0;top:0;height:52%;z-index:5;
   pointer-events:none;opacity:0;filter:blur(16px);
@@ -604,7 +619,7 @@ body.expand .env-flap-inner,body.expand .env-cast{
 }
 .seal-svg{display:block;width:100%;height:100%;overflow:visible}
 .seal-mono{
-  font-family:'Pinyon Script',cursive;font-size:43px;letter-spacing:-.5px;
+  font-family:'Pinyon Script',cursive;font-size:52px;letter-spacing:-.5px;
   paint-order:stroke;stroke:rgba(140,112,52,.20);stroke-width:.5;
 }
 /* idle: the seal breathes a soft golden glow, and the embossing shimmers */
@@ -636,6 +651,7 @@ body.opening .env-burst{animation:burstOut 2.0s cubic-bezier(.2,.72,.28,1) .42s 
   70% {opacity:.35;transform:translate(-50%,-50%) scale(1.35)}
   100%{opacity:0;transform:translate(-50%,-50%) scale(1.75)}
 }
+.burst-glow,.burst-core,.burst-rays{filter:url(#bloomLight)}
 .burst-glow{
   position:absolute;inset:-42%;border-radius:50%;
   background:radial-gradient(circle,
@@ -652,10 +668,10 @@ body.opening .env-burst{animation:burstOut 2.0s cubic-bezier(.2,.72,.28,1) .42s 
 .burst-rays{
   position:absolute;inset:-62%;border-radius:50%;
   background:repeating-conic-gradient(from 0deg,
-    rgba(255,255,255,0) 0deg 5.5deg,
-    rgba(255,255,255,.92) 5.5deg 8.5deg,
-    rgba(255,252,242,.55) 8.5deg 10.5deg,
-    rgba(255,255,255,0) 10.5deg 17deg);
+    rgba(255,255,255,0) 0deg 3.6deg,
+    rgba(255,252,238,.62) 3.6deg 5.0deg,
+    rgba(255,250,232,.30) 5.0deg 6.0deg,
+    rgba(255,255,255,0) 6.0deg 9deg);
   -webkit-mask-image:radial-gradient(circle,rgba(0,0,0,.98) 6%,rgba(0,0,0,.72) 26%,rgba(0,0,0,.28) 48%,rgba(0,0,0,0) 70%);
   mask-image:radial-gradient(circle,rgba(0,0,0,.98) 6%,rgba(0,0,0,.72) 26%,rgba(0,0,0,.28) 48%,rgba(0,0,0,0) 70%);
   animation:raysTurn 9s linear infinite;
@@ -686,7 +702,7 @@ body.opening .burst-spark{animation:sparkOut 1.5s ease-out .16s forwards}
 .burst-spark.s4{--sx: 34vmin;--sy: 18vmin;animation-delay:.26s}
 .burst-spark.s5{--sx:  6vmin;--sy:-38vmin;animation-delay:.34s}
 .burst-spark.s6{--sx:-14vmin;--sy: 34vmin;animation-delay:.20s}
-@media (prefers-reduced-motion:reduce){.env-burst,.burst-spark,.burst-rays{animation:none!important;opacity:0!important}}
+@media (prefers-reduced-motion:reduce){.env-burst,.burst-spark,.burst-rays,.env-shine,.env-flash{animation:none!important;opacity:0!important}}
 
 .open-hint{position:absolute;left:0;right:0;bottom:2.6svh;text-align:center;
   font-family:var(--sans);font-size:.54rem;letter-spacing:.34em;
@@ -723,6 +739,16 @@ html.intro-locked{overflow:hidden}
 <!-- ENVELOPE OPENER — portrait envelope, embossed vinework, wax seal.
      Tap: flap folds up → card fills the screen → names fade in → veil lifts.
      The same tap starts the music. Reference: webgency_invitations style. -->
+<svg class="svg-defs" width="0" height="0" aria-hidden="true" focusable="false">
+  <filter id="bloomLight" x="-95%" y="-95%" width="290%" height="290%" color-interpolation-filters="sRGB">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="5"  result="b1"/>
+    <feGaussianBlur in="SourceGraphic" stdDeviation="16" result="b2"/>
+    <feGaussianBlur in="SourceGraphic" stdDeviation="40" result="b3"/>
+    <feBlend in="b1" in2="b2" mode="screen" result="m1"/>
+    <feBlend in="m1" in2="b3" mode="screen" result="m2"/>
+    <feBlend in="m2" in2="SourceGraphic" mode="screen"/>
+  </filter>
+</svg>
 <div class="opener-veil" id="opener" role="button" tabindex="0" aria-label="Open the invitation">
   <div class="envelope">
 
@@ -736,6 +762,9 @@ html.intro-locked{overflow:hidden}
 
     <!-- deep shade inside the opening so the light really pours out -->
     <div class="env-throat" aria-hidden="true"></div>
+
+    <!-- warm bloom that floods the frame as it opens (softens the reveal) -->
+    <div class="env-flash" aria-hidden="true"></div>
 
     <!-- shadow the lifting flap throws across the body -->
     <div class="env-cast" aria-hidden="true"></div>
