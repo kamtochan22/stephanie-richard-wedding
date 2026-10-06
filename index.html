@@ -471,6 +471,31 @@ body.opened .opener-veil{opacity:0;visibility:hidden;pointer-events:none}
 .envelope{position:relative;width:100%;height:100svh;transform-style:preserve-3d}
 
 /* --- body artwork (the flap area of this file is the envelope's interior) --- */
+/* specular sweep travelling across the blind embossing (idle) */
+.env-shine{
+  position:absolute;top:-35%;bottom:-35%;left:-62%;right:-62%;z-index:4;pointer-events:none;
+  background:linear-gradient(74deg,
+    rgba(255,236,180,0) 46.5%,rgba(255,232,170,.46) 48.6%,
+    rgba(255,242,198,.98) 50%,rgba(255,232,170,.46) 51.4%,rgba(255,236,180,0) 53.5%);
+  mix-blend-mode:screen;opacity:0;will-change:transform,opacity;
+  animation:shineSweep 7.5s ease-in-out infinite;
+}
+@keyframes shineSweep{
+  0%  {transform:translate(-44%,-16%);opacity:0}
+  7%  {opacity:.95}
+  27% {transform:translate(44%,16%);opacity:0}
+  100%{transform:translate(44%,16%);opacity:0}
+}
+body.opening .env-shine{animation:none;opacity:0;transition:opacity .3s}
+/* deep shade in the opening */
+.env-throat{
+  position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:
+    linear-gradient(180deg,rgba(96,80,56,.34) 0%,rgba(104,88,62,.16) 15%,rgba(112,96,70,.05) 26%,transparent 38%),
+    radial-gradient(60% 26% at 50% 47%,rgba(92,76,52,.30) 0%,transparent 72%);
+  opacity:1;transition:opacity .5s ease;
+}
+body.expand .env-throat{opacity:0}
 .env-back{position:absolute;inset:0;
   background:#EFE7DA url("textures/envelope-body.jpg") center/cover no-repeat}
 
@@ -582,7 +607,20 @@ body.expand .env-flap-inner,body.expand .env-cast{
   font-family:'Pinyon Script',cursive;font-size:43px;letter-spacing:-.5px;
   paint-order:stroke;stroke:rgba(140,112,52,.20);stroke-width:.5;
 }
-body.opening .seal{opacity:0;transform:translate(-50%,-50%) scale(1.06)}
+/* idle: the seal breathes a soft golden glow, and the embossing shimmers */
+.seal::after{
+  content:"";position:absolute;inset:-26%;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,240,198,.60) 0%,rgba(255,232,176,.26) 38%,rgba(255,228,168,0) 70%);
+  animation:sealGlow 7.5s ease-in-out infinite;
+}
+@keyframes sealGlow{0%,72%,100%{opacity:.18}6%{opacity:.95}16%{opacity:.45}26%{opacity:.2}}
+/* opening: the seal lifts off the envelope and floats away */
+body.opening .seal{animation:sealLift 1.5s cubic-bezier(.24,.62,.28,1) .1s forwards}
+@keyframes sealLift{
+  0%  {opacity:1;transform:translate(-50%,-50%) rotate(0deg) scale(1)}
+  34% {opacity:1;transform:translate(-50%,-63%) rotate(-3.5deg) scale(1.03)}
+  100%{opacity:0;transform:translate(-50%,-124%) rotate(-9deg) scale(.88)}
+}
 
 /* --- the light that pours out of the envelope the moment it opens --- */
 .env-burst{
@@ -590,7 +628,7 @@ body.opening .seal{opacity:0;transform:translate(-50%,-50%) scale(1.06)}
   width:var(--seal-w,34%);aspect-ratio:1;transform:translate(-50%,-50%);
   pointer-events:none;opacity:0;
 }
-body.opening .env-burst{animation:burstOut 1.9s cubic-bezier(.22,.7,.3,1) .1s forwards}
+body.opening .env-burst{animation:burstOut 2.0s cubic-bezier(.2,.72,.28,1) .42s forwards}
 @keyframes burstOut{
   0%  {opacity:0;transform:translate(-50%,-50%) scale(.28)}
   14% {opacity:1;transform:translate(-50%,-50%) scale(.72)}
@@ -693,6 +731,12 @@ html.intro-locked{overflow:hidden}
     <!-- the plain card that will grow to fill the screen -->
     <div class="card"></div>
 
+    <!-- specular sweep across the embossing (idle shimmer, as in the reference) -->
+    <div class="env-shine" aria-hidden="true"></div>
+
+    <!-- deep shade inside the opening so the light really pours out -->
+    <div class="env-throat" aria-hidden="true"></div>
+
     <!-- shadow the lifting flap throws across the body -->
     <div class="env-cast" aria-hidden="true"></div>
 
@@ -708,6 +752,8 @@ html.intro-locked{overflow:hidden}
         
       </div>
       <div class="env-flap-inner" aria-hidden="true"></div>
+      </span>
+    </div>
       <span class="seal" aria-hidden="true">
         <svg class="seal-svg" viewBox="0 0 200 200" role="presentation">
           <defs>
@@ -749,8 +795,6 @@ html.intro-locked{overflow:hidden}
                 fill="url(#sgGold)">S &amp; R</text>
         </svg>
       </span>
-      </span>
-    </div>
         <span class="env-burst" aria-hidden="true">
           <span class="burst-shaft"></span><span class="burst-rays"></span>
           <span class="burst-glow"></span><span class="burst-core"></span>
