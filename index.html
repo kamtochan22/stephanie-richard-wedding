@@ -491,19 +491,18 @@ body.opened .opener-veil{opacity:0;visibility:hidden;pointer-events:none}
   36% {background-position:170% 170%;opacity:0}
   100%{background-position:170% 170%;opacity:0}
 }
-body.opening .env-shine{animation:glowBurst 1.7s ease-out .42s forwards}
 @keyframes glowBurst{0%{opacity:0;background-position:50% 50%}18%{opacity:.98}60%{opacity:.5}100%{opacity:0}}
 /* deep shade in the opening */
-.env-throat{
-  position:absolute;inset:0;z-index:2;pointer-events:none;
+.env-throat{                                     /* interior shade — must sit BEHIND the card */
+  position:absolute;inset:0;z-index:1;pointer-events:none;
   background:
     linear-gradient(180deg,rgba(96,80,56,.34) 0%,rgba(104,88,62,.16) 15%,rgba(112,96,70,.05) 26%,transparent 38%),
     radial-gradient(60% 26% at 50% 47%,rgba(92,76,52,.30) 0%,transparent 72%);
   opacity:1;transition:opacity .5s ease;
 }
-body.expand .env-throat{opacity:0}
-.env-back{position:absolute;inset:0;
-  background:#EFE7DA url("textures/envelope-body.jpg") center/cover no-repeat}
+body.opening .env-throat{opacity:0;transition:opacity .55s ease}   /* gone as soon as it opens */
+.env-back{position:absolute;inset:0;                    /* plain ground the card rises from */
+  background:radial-gradient(125% 92% at 50% 46%,#F7F1E5 0%,#EFE7DA 52%,#E5DBC9 100%)}
 
 /* --- the invitation card --- */
 .card{
@@ -555,22 +554,47 @@ body.revealed .card-meta {opacity:1;transform:none;transition-delay:.58s}
 /* --- three folds, clipped from the same artwork so the creases line up --- */
 .env-pocket{position:absolute;inset:0;z-index:3;overflow:hidden;
   background:url("textures/envelope-body.jpg") center/cover no-repeat}
-.env-pocket.l{clip-path:var(--pk-l);filter:drop-shadow(0 1px 6px rgba(80,66,48,.22))}
-.env-pocket.r{clip-path:var(--pk-r);filter:drop-shadow(0 1px 6px rgba(80,66,48,.22))}
-.env-pocket.b{clip-path:var(--pk-b);filter:drop-shadow(0 -1px 7px rgba(80,66,48,.24))}
+.env-pocket.l{clip-path:var(--pk-l);filter:drop-shadow(0 1px 6px rgba(80,66,48,.22));
+  transform-origin:100% 48%}
+.env-pocket.r{clip-path:var(--pk-r);filter:drop-shadow(0 1px 6px rgba(80,66,48,.22));
+  transform-origin:0% 48%}
+.env-pocket.b{clip-path:var(--pk-b);filter:drop-shadow(0 -1px 7px rgba(80,66,48,.24));
+  transform-origin:50% 0%}
+/* soft curl shading that grows as a fold turns over */
+.env-pocket::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;
+  background:linear-gradient(112deg,rgba(72,60,42,.30) 0%,rgba(72,60,42,.07) 20%,rgba(255,255,255,.10) 34%,transparent 52%)}
+body.opening .env-pocket::after{animation:curlShade 1.5s ease .32s forwards}
+@keyframes curlShade{0%{opacity:0}34%{opacity:.9}100%{opacity:.25}}
 
 /* --- the flap: photographic artwork hinged on the top edge --------------- */
 .env-flap-wrap{
   position:absolute;inset:0;z-index:6;transform-style:preserve-3d;
-  transform-origin:50% 0;
+  transform-origin:50% 100%;
 }
-body.opening .env-flap-wrap{animation:flapOpen 1.35s cubic-bezier(.32,.06,.28,1) forwards}
-@keyframes flapOpen{
-  0%  {transform:rotateX(0deg)}
-  16% {transform:rotateX(-16deg)}     /* the paper peels slowly off the seal */
-  52% {transform:rotateX(-96deg)}
-  82% {transform:rotateX(-160deg)}
-  100%{transform:rotateX(-172deg)}
+/* opening: the four folds slide outward and the card blooms up from behind them */
+body.opening .env-flap-wrap{animation:awayUp 1.5s cubic-bezier(.34,.72,.24,1) .32s forwards}
+@keyframes awayUp{                       /* top flap: hinged along its bottom fold */
+  0%  {transform:perspective(1100px) translate(0,0) rotate(0deg) rotateX(0deg)}
+  30% {transform:perspective(1100px) translate(-1%,-26%) rotate(-1deg) rotateX(7deg)}
+  100%{transform:perspective(1100px) translate(-2.5%,-118%) rotate(-1.8deg) rotateX(13deg)}
+}
+body.opening .env-pocket.l{animation:awayLeft 1.5s cubic-bezier(.34,.72,.24,1) .32s forwards}
+@keyframes awayLeft {                    /* left fold: hinged on the fold line near the centre */
+  0%  {transform:perspective(1100px) translate(0,0) rotate(0deg) rotateY(0deg)}
+  30% {transform:perspective(1100px) translate(-24%,1%) rotate(-.8deg) rotateY(-6deg)}
+  100%{transform:perspective(1100px) translate(-106%,3%) rotate(-1.6deg) rotateY(-11deg)}
+}
+body.opening .env-pocket.r{animation:awayRight 1.5s cubic-bezier(.34,.72,.24,1) .32s forwards}
+@keyframes awayRight{
+  0%  {transform:perspective(1100px) translate(0,0) rotate(0deg) rotateY(0deg)}
+  30% {transform:perspective(1100px) translate(24%,1%) rotate(.8deg) rotateY(6deg)}
+  100%{transform:perspective(1100px) translate(106%,3%) rotate(1.6deg) rotateY(11deg)}
+}
+body.opening .env-pocket.b{animation:awayDown 1.5s cubic-bezier(.34,.72,.24,1) .32s forwards}
+@keyframes awayDown {                    /* bottom fold: hinged along the top */
+  0%  {transform:perspective(1100px) translate(0,0) rotateX(0deg)}
+  30% {transform:perspective(1100px) translate(0,20%) rotateX(-6deg)}
+  100%{transform:perspective(1100px) translate(0,106%) rotateX(-11deg)}
 }
 .env-flap,.env-flap-inner{
   position:absolute;inset:0;overflow:hidden;
@@ -594,14 +618,13 @@ body.opening .env-flap-wrap{animation:flapOpen 1.35s cubic-bezier(.32,.06,.28,1)
     rgba(255,232,186,.34) 58%,rgba(255,228,180,0) 86%);
   mix-blend-mode:screen;
 }
-body.opening .env-flash{animation:flashOut 2.2s cubic-bezier(.2,.7,.3,1) .42s forwards}
+body.opening .env-flash{display:none}
 @keyframes flashOut{0%{opacity:0}16%{opacity:.92}46%{opacity:.5}100%{opacity:0}}
 .env-cast{                                         /* flap's shadow on the body */
   position:absolute;left:0;right:0;top:0;height:52%;z-index:5;
   pointer-events:none;opacity:0;filter:blur(16px);
   background:linear-gradient(180deg,rgba(70,58,40,.30) 0%,rgba(70,58,40,.10) 46%,transparent 100%);
 }
-body.opening .env-cast{animation:castSweep 1.35s cubic-bezier(.32,.06,.28,1) forwards}
 @keyframes castSweep{
   0%  {opacity:0;  transform:scaleY(.25)}
   30% {opacity:.75;transform:scaleY(.80)}
@@ -632,12 +655,8 @@ body.expand .env-flap-inner,body.expand .env-cast{
 }
 @keyframes sealGlow{0%,72%,100%{opacity:.18}6%{opacity:.95}16%{opacity:.45}26%{opacity:.2}}
 /* opening: the seal lifts off the envelope and floats away */
-body.opening .seal{animation:sealLift 1.5s cubic-bezier(.24,.62,.28,1) .1s forwards}
-@keyframes sealLift{
-  0%  {opacity:1;transform:translate(-50%,-50%) rotate(0deg) scale(1)}
-  34% {opacity:1;transform:translate(-50%,-63%) rotate(-3.5deg) scale(1.03)}
-  100%{opacity:0;transform:translate(-50%,-124%) rotate(-9deg) scale(.88)}
-}
+body.opening .seal{animation:sealFade .95s ease forwards}
+@keyframes sealFade{0%{opacity:1}55%{opacity:.5}100%{opacity:0}}
 
 /* --- the light that pours out of the envelope the moment it opens --- */
 .env-burst{                                     /* full-frame bloom pouring out of the seal */
@@ -645,7 +664,7 @@ body.opening .seal{animation:sealLift 1.5s cubic-bezier(.24,.62,.28,1) .1s forwa
   width:max(230vw,200vh);aspect-ratio:1;transform:translate(-50%,-50%);
   pointer-events:none;opacity:0;
 }
-body.opening .env-burst{animation:burstOut 2.0s cubic-bezier(.2,.72,.28,1) .42s forwards}
+body.opening .env-burst{display:none}
 @keyframes burstOut{
   0%  {opacity:0;transform:translate(-50%,-50%) scale(.06)}
   10% {opacity:1;transform:translate(-50%,-50%) scale(.30)}
@@ -705,11 +724,12 @@ body.opening .burst-spark{animation:sparkOut 1.5s ease-out .16s forwards}
 .burst-spark.s6{--sx:-14vmin;--sy: 34vmin;animation-delay:.20s}
 @media (prefers-reduced-motion:reduce){.env-burst,.burst-spark,.burst-rays,.env-shine,.env-flash{animation:none!important;opacity:0!important}}
 
-.open-hint{position:absolute;left:0;right:0;bottom:2.6svh;text-align:center;
+.open-hint{position:absolute;left:0;right:0;top:var(--seal-below,60%);text-align:center;
   font-family:var(--sans);font-size:.54rem;letter-spacing:.34em;
   text-transform:uppercase;color:#9C9287;animation:hintPulse 2.8s ease-in-out infinite}
 @keyframes hintPulse{0%,100%{opacity:.9}50%{opacity:.28}}
-body.opening .open-hint{animation:none;opacity:0;transition:opacity .35s}
+body.opening .open-hint{animation:hintFade .8s ease forwards}
+@keyframes hintFade{0%{opacity:1}100%{opacity:0}}
 html.intro-locked{overflow:hidden}
 @media (prefers-reduced-motion:reduce){
   .env-flap-wrap,.card,.opener-veil{transition-duration:.01s}
@@ -793,7 +813,7 @@ html.intro-locked{overflow:hidden}
             </radialGradient>
             <linearGradient id="sgRim" x1="22%" y1="2%" x2="78%" y2="98%">
               <stop offset="0%" stop-color="#FFFDF8"/><stop offset="40%" stop-color="#F4EDDE"/>
-              <stop offset="72%" stop-color="#DFD3BA"/><stop offset="100%" stop-color="#C9B994"/>
+              <stop offset="70%" stop-color="#D8CAA9"/><stop offset="100%" stop-color="#BCA87D"/>
             </linearGradient>
             <radialGradient id="sgPlate" cx="44%" cy="38%" r="72%">
               <stop offset="0%" stop-color="#F9F4E8"/><stop offset="72%" stop-color="#EFE7D6"/>
@@ -805,7 +825,7 @@ html.intro-locked{overflow:hidden}
               <stop offset="100%" stop-color="#EEDDA9"/>
             </linearGradient>
             <filter id="sgSoft" x="-30%" y="-30%" width="160%" height="160%">
-              <feDropShadow dx="1.1" dy="2.6" stdDeviation="2.3" flood-color="#6b5a3a" flood-opacity=".30"/>
+              <feDropShadow dx="1.4" dy="3.6" stdDeviation="3.4" flood-color="#5f5035" flood-opacity=".40"/>
             </filter>
           </defs>
           <g filter="url(#sgSoft)">
@@ -1303,6 +1323,7 @@ if(opener){
     st.setProperty("--seal-x", px(SEAL.x));
     st.setProperty("--seal-y", py(SEAL.y));
     st.setProperty("--seal-w", (SEAL.dia * s / W * 100).toFixed(4) + "%");
+    st.setProperty("--seal-below", (oy + (SEAL.y + SEAL.dia / 2 + 26) * s).toFixed(1) + "px");
   };
   layoutEnvelope();
   window.addEventListener("resize", layoutEnvelope);
