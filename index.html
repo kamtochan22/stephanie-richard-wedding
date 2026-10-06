@@ -448,51 +448,44 @@ body.menu-open .menu-group.sub .sub-link:nth-child(2){transition-delay:.36s}
 @media (prefers-reduced-motion:reduce){.sound button{animation:none}.sound.on .bars i{animation:none;height:8px}}
 
 /* ============================================================
-   ENVELOPE OPENER — portrait envelope, embossed vinework, scalloped
-   wax seal. Tap: the flap folds up, the card rises and fills the
-   screen, the script names fade in, then the veil lifts onto the site.
-   (That tap is also the gesture that starts the music.)
+   ENVELOPE OPENER — built from a photographic 3D-rendered envelope
+   (deep blind-embossed florals + a cream wax seal). Layers:
+     .env-back      the body artwork (its flap area is the interior paper)
+     .env-pocket.*  the same artwork clipped to the three folds, adding crease shadows
+     .env-flap      the flap artwork, hinged on the top edge
+     .seal          photographic seal cut-out + gold script monogram
+     .card          the invitation card that rises and fills the screen
+   Crease apex and seal position are mapped from the source image in
+   layoutEnvelope() so every layer stays pixel-aligned at any viewport size.
    ============================================================ */
 .opener-veil{
   position:fixed;inset:0;z-index:80;overflow:hidden;
-  background:radial-gradient(125% 95% at 50% 32%,#FCFAF6 0%,#F2ECE3 58%,#E9E2D7 100%);
+  background:#EFE7DA;
   perspective:1800px;cursor:pointer;outline:none;
   transition:opacity .9s cubic-bezier(.23,1,.32,1),visibility .9s;
 }
 body.opened .opener-veil{opacity:0;visibility:hidden;pointer-events:none}
 .opener-veil:focus,.opener-veil:focus-visible{outline:none}
-.opener-veil:focus-visible .open-hint{color:#5B544B}
+.opener-veil:focus-visible .open-hint{color:#8A7C64}
 
-/* --- the envelope: fills the whole screen, exactly like the reference ---
-       real-paper look: cool-neutral stock, soft panel shading, grain */
 .envelope{position:relative;width:100%;height:100svh;transform-style:preserve-3d}
-.envelope::after{                                  /* real paper grain */
-  content:"";position:absolute;inset:0;z-index:9;pointer-events:none;
-  background-image:url("textures/paper-grain.png");
-  background-size:400px 400px;
-  mix-blend-mode:multiply;opacity:.32;
-  transition:opacity .5s ease;
-}
-body.expand .envelope::after{opacity:0}
-.env-back{
-  position:absolute;inset:0;
-  background:radial-gradient(115% 72% at 50% 44%,#FDFDFE 38%,#F6F7F9 74%,#EDEFF3 100%);
-  box-shadow:inset 0 0 110px rgba(58,64,88,.07);
-}
-/* --- the invitation card that sits inside the envelope --- */
+
+/* --- body artwork (the flap area of this file is the envelope's interior) --- */
+.env-back{position:absolute;inset:0;
+  background:#EFE7DA url("textures/envelope-body.jpg") center/cover no-repeat}
+
+/* --- the invitation card --- */
 .card{
   position:absolute;left:7%;right:7%;bottom:4%;height:84%;z-index:2;
-  background-image:url("textures/paper-grain.png");
-  background-size:400px 400px;background-blend-mode:multiply;
-  background-color:#FBF7F0;
-  border:1px solid rgba(70,55,35,.10);border-radius:2px;
+  background:#F7F0E4 url("textures/card-paper.jpg") repeat;
+  border:1px solid rgba(120,100,70,.16);border-radius:2px;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  box-shadow:0 14px 30px -8px rgba(70,55,35,.16);
+  box-shadow:0 14px 30px -8px rgba(80,66,48,.18);
   transform-origin:50% 50%;
   transition:transform 1.15s cubic-bezier(.36,0,.2,1) .5s,border-radius .9s ease,
              border-color .7s ease,box-shadow .7s ease;
 }
-.card::after{content:"";position:absolute;inset:10px;border:1px solid rgba(70,55,35,.07);
+.card::after{content:"";position:absolute;inset:10px;border:1px solid rgba(120,100,70,.14);
   border-radius:1px;pointer-events:none;transition:opacity .6s ease}
 body.opening .card{transform:translateY(-4%)}
 body.expand  .card{transform:translate(var(--tx,0px),var(--ty,0px)) scale(var(--k,1));
@@ -525,32 +518,15 @@ body.revealed .card-names{opacity:1;transform:none}
 body.revealed .card-rule {opacity:1;transform:none;transition-delay:.2s}
 body.revealed .card-sub  {opacity:1;transform:none;transition-delay:.38s}
 body.revealed .card-meta {opacity:1;transform:none;transition-delay:.58s}
-/* --- the front: left / right / bottom pockets meeting at the centre,
-       embossed with white-on-white vinework (as in the reference) --- */
-.env-pocket{position:absolute;inset:0;z-index:3;overflow:hidden}
-.env-pocket.l{clip-path:polygon(0 0,50% 47%,0 100%);
-  background-image:url("textures/paper-grain.png"),linear-gradient(100deg,#F8F9FB,#FCFCFD 34%,#FEFEFF);
-  background-size:400px 400px,100% 100%;background-blend-mode:multiply,normal;
-  filter:drop-shadow(0 1px 7px rgba(58,64,88,.26))}
-.env-pocket.r{clip-path:polygon(100% 0,50% 47%,100% 100%);
-  background-image:url("textures/paper-grain.png"),linear-gradient(260deg,#F8F9FB,#FCFCFD 34%,#FEFEFF);
-  background-size:400px 400px,100% 100%;background-blend-mode:multiply,normal;
-  filter:drop-shadow(0 1px 7px rgba(58,64,88,.26))}
-.env-pocket.b{clip-path:polygon(0 100%,50% 47%,100% 100%);
-  background-image:url("textures/paper-grain.png"),linear-gradient(0deg,#F5F6F9,#FBFBFC 30%,#FEFEFF);
-  background-size:400px 400px,100% 100%;background-blend-mode:multiply,normal;
-  filter:drop-shadow(0 -1px 8px rgba(58,64,88,.28))}
-.sprig{position:absolute;color:#FDFDFE;width:min(30vmin,170px);
-  filter:drop-shadow(.6px 1.1px 1.3px rgba(58,64,88,.24)) drop-shadow(-.5px -.7px .9px rgba(255,255,255,.98))}
-.sprig--l {left:24%;top:72%;transform:translate(-50%,-50%) rotate(40deg)}
-.sprig--r {left:76%;top:72%;transform:translate(-50%,-50%) rotate(-40deg) scaleX(-1)}
-.sprig--b {left:50%;top:76%;width:min(18vmin,110px);transform:translate(-50%,-50%)}
-.sprig--f1{left:33%;top:27%;width:min(20vmin,120px);transform:translate(-50%,-50%) rotate(213deg)}
-.sprig--f2{left:67%;top:27%;width:min(20vmin,120px);transform:translate(-50%,-50%) rotate(147deg)}
 
-/* --- the flap: hinged at the top edge, carries the seal, folds up.
-       Two faces (outer + underside) + a cast shadow that sweeps across the
-       body, so it reads as paper rather than a flat plane. --- */
+/* --- three folds, clipped from the same artwork so the creases line up --- */
+.env-pocket{position:absolute;inset:0;z-index:3;overflow:hidden;
+  background:url("textures/envelope-body.jpg") center/cover no-repeat}
+.env-pocket.l{clip-path:var(--pk-l);filter:drop-shadow(0 1px 6px rgba(80,66,48,.22))}
+.env-pocket.r{clip-path:var(--pk-r);filter:drop-shadow(0 1px 6px rgba(80,66,48,.22))}
+.env-pocket.b{clip-path:var(--pk-b);filter:drop-shadow(0 -1px 7px rgba(80,66,48,.24))}
+
+/* --- the flap: photographic artwork hinged on the top edge --------------- */
 .env-flap-wrap{
   position:absolute;inset:0;z-index:6;transform-style:preserve-3d;
   transform-origin:50% 0;
@@ -565,25 +541,23 @@ body.opening .env-flap-wrap{animation:flapOpen 1.35s cubic-bezier(.32,.06,.28,1)
 }
 .env-flap,.env-flap-inner{
   position:absolute;inset:0;overflow:hidden;
-  clip-path:polygon(0 0,50% 47%,100% 0);
+  clip-path:var(--flap);
   -webkit-backface-visibility:hidden;backface-visibility:hidden;
 }
 .env-flap{
-  background-image:url("textures/paper-grain.png"),linear-gradient(180deg,#FDFDFE,#F5F6F9 62%,#ECEFF4);
-  background-size:400px 400px,100% 100%;background-blend-mode:multiply,normal;
-  filter:drop-shadow(0 2px 6px rgba(58,64,88,.20));
+  background:url("textures/envelope-flap.jpg") center/cover no-repeat;
+  filter:drop-shadow(0 2px 7px rgba(80,66,48,.18));
 }
 .env-flap-inner{                                   /* underside of the flap */
-  background-image:url("textures/paper-grain.png"),linear-gradient(0deg,#E6E9F0,#F2F4F8 48%,#FBFCFD);
-  background-size:400px 400px,100% 100%;background-blend-mode:multiply,normal;
+  background:#EFE7DA url("textures/card-paper.jpg") repeat;
   transform-origin:50% 0;
   transform:translateZ(.3px) rotateX(180deg);
-  filter:drop-shadow(0 -2px 9px rgba(58,64,88,.22));
+  filter:drop-shadow(0 -2px 10px rgba(80,66,48,.22));
 }
 .env-cast{                                         /* flap's shadow on the body */
   position:absolute;left:0;right:0;top:0;height:52%;z-index:5;
   pointer-events:none;opacity:0;filter:blur(16px);
-  background:linear-gradient(180deg,rgba(58,64,88,.30) 0%,rgba(58,64,88,.10) 46%,transparent 100%);
+  background:linear-gradient(180deg,rgba(70,58,40,.30) 0%,rgba(70,58,40,.10) 46%,transparent 100%);
 }
 body.opening .env-cast{animation:castSweep 1.35s cubic-bezier(.32,.06,.28,1) forwards}
 @keyframes castSweep{
@@ -593,26 +567,24 @@ body.opening .env-cast{animation:castSweep 1.35s cubic-bezier(.32,.06,.28,1) for
   100%{opacity:0;  transform:scaleY(1)}
 }
 body.expand .env-back,body.expand .env-pocket,body.expand .env-flap,
-body.expand .env-flap-inner{
+body.expand .env-flap-inner,body.expand .env-cast{
   opacity:0;transition:opacity .55s ease}
 
-/* --- scalloped wax seal with a gold script monogram --- */
+/* --- photographic wax seal (cut out of the render) with a gold script monogram --- */
 .seal{
-  position:absolute;left:50%;top:47%;transform:translate(-50%,-50%);
-  width:clamp(80px,23vmin,132px);height:clamp(80px,23vmin,132px);
-  display:grid;place-items:center;
-  filter:drop-shadow(0 5px 9px rgba(70,55,35,.26));
-  transition:opacity .32s ease .72s,transform .32s ease .72s;   /* fades as the flap passes upright */
+  position:absolute;left:var(--seal-x,50%);top:var(--seal-y,50%);z-index:7;
+  width:var(--seal-w,34%);aspect-ratio:1;display:grid;place-items:center;
+  transform:translate(-50%,-50%);
+  transition:opacity .32s ease .72s,transform .32s ease .72s;
 }
-.seal-img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
-  filter:drop-shadow(0 3px 6px rgba(58,64,88,.20))}
+.seal-img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
 .seal-mono{
-  position:relative;font-family:'Great Vibes',cursive;letter-spacing:.02em;
-  font-size:clamp(.82rem,3.6vmin,1.25rem);
-  color:#C3A468;
-  text-shadow:0 1px 0 rgba(255,255,255,.6),0 -1px 1px rgba(110,88,42,.42);
+  position:relative;font-family:'Great Vibes',cursive;letter-spacing:.01em;
+  font-size:var(--seal-fs,1.1rem);line-height:1;
+  color:#D8B878;
+  text-shadow:0 1px 0 rgba(255,255,255,.5),0 -1px 1px rgba(118,90,40,.5);
 }
-body.opening .seal{opacity:0;transform:translate(-50%,-50%) scale(.9)}
+body.opening .seal{opacity:0;transform:translate(-50%,-50%) scale(.96)}
 
 .open-hint{position:absolute;left:0;right:0;bottom:2.6svh;text-align:center;
   font-family:var(--sans);font-size:.54rem;letter-spacing:.34em;
@@ -649,42 +621,6 @@ html.intro-locked{overflow:hidden}
 <!-- ENVELOPE OPENER — portrait envelope, embossed vinework, wax seal.
      Tap: flap folds up → card fills the screen → names fade in → veil lifts.
      The same tap starts the music. Reference: webgency_invitations style. -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
-  <symbol id="sprigShape" viewBox="0 0 60 200">
-    <g fill="currentColor">
-      <path d="M30,196 C25,158 35,120 30,82 C27,58 30,38 30,22" fill="none" stroke="currentColor" stroke-width="0.9" stroke-linecap="round"/>
-      <ellipse cx="23.4" cy="190.0" rx="6.0" ry="1.9" transform="rotate(-55 23.4 190.0)"/>
-      <ellipse cx="36.6" cy="179.4" rx="6.0" ry="1.9" transform="rotate(55 36.6 179.4)"/>
-      <ellipse cx="23.4" cy="168.8" rx="6.0" ry="1.9" transform="rotate(-55 23.4 168.8)"/>
-      <ellipse cx="36.6" cy="158.2" rx="6.0" ry="1.9" transform="rotate(55 36.6 158.2)"/>
-      <ellipse cx="23.4" cy="147.6" rx="6.0" ry="1.9" transform="rotate(-55 23.4 147.6)"/>
-      <ellipse cx="36.6" cy="137.0" rx="6.0" ry="1.9" transform="rotate(55 36.6 137.0)"/>
-      <ellipse cx="23.4" cy="126.4" rx="6.0" ry="1.9" transform="rotate(-55 23.4 126.4)"/>
-      <ellipse cx="36.6" cy="115.8" rx="6.0" ry="1.9" transform="rotate(55 36.6 115.8)"/>
-      <ellipse cx="23.4" cy="105.2" rx="6.0" ry="1.9" transform="rotate(-55 23.4 105.2)"/>
-      <ellipse cx="36.6" cy="94.6" rx="6.0" ry="1.9" transform="rotate(55 36.6 94.6)"/>
-      <ellipse cx="23.4" cy="84.0" rx="6.0" ry="1.9" transform="rotate(-55 23.4 84.0)"/>
-      <ellipse cx="36.6" cy="73.4" rx="6.0" ry="1.9" transform="rotate(55 36.6 73.4)"/>
-      <ellipse cx="23.4" cy="62.8" rx="6.0" ry="1.9" transform="rotate(-55 23.4 62.8)"/>
-      <ellipse cx="36.6" cy="52.2" rx="6.0" ry="1.9" transform="rotate(55 36.6 52.2)"/>
-      <ellipse cx="23.4" cy="41.6" rx="6.0" ry="1.9" transform="rotate(-55 23.4 41.6)"/>
-      <ellipse cx="36.6" cy="31.0" rx="6.0" ry="1.9" transform="rotate(55 36.6 31.0)"/>
-      <circle cx="33.4" cy="184.0" r="1.25"/>
-      <circle cx="26.6" cy="157.0" r="1.25"/>
-      <circle cx="33.4" cy="130.0" r="1.25"/>
-      <circle cx="26.6" cy="103.0" r="1.25"/>
-      <circle cx="33.4" cy="76.0" r="1.25"/>
-      <circle cx="26.6" cy="49.0" r="1.25"/>
-      <ellipse cx="30.0" cy="12.1" rx="3.6" ry="2.2"/>
-      <ellipse cx="34.2" cy="15.1" rx="3.6" ry="2.2" transform="rotate(72 34.2 15.1)"/>
-      <ellipse cx="32.6" cy="20.1" rx="3.6" ry="2.2" transform="rotate(144 32.6 20.1)"/>
-      <ellipse cx="27.4" cy="20.1" rx="3.6" ry="2.2" transform="rotate(216 27.4 20.1)"/>
-      <ellipse cx="25.8" cy="15.1" rx="3.6" ry="2.2" transform="rotate(288 25.8 15.1)"/>
-      <circle cx="30" cy="16.5" r="1.7"/>
-    </g>
-  </symbol>
-</svg>
-
 <div class="opener-veil" id="opener" role="button" tabindex="0" aria-label="Open the invitation">
   <div class="envelope">
 
@@ -697,15 +633,15 @@ html.intro-locked{overflow:hidden}
     <div class="env-cast" aria-hidden="true"></div>
 
     <!-- embossed front: left / right / bottom pockets -->
-    <div class="env-pocket l"><svg class="sprig sprig--l" viewBox="0 0 60 200" aria-hidden="true"><use href="#sprigShape"/></svg></div>
-    <div class="env-pocket r"><svg class="sprig sprig--r" viewBox="0 0 60 200" aria-hidden="true"><use href="#sprigShape"/></svg></div>
-    <div class="env-pocket b"><svg class="sprig sprig--b" viewBox="0 0 60 200" aria-hidden="true"><use href="#sprigShape"/></svg></div>
+    <div class="env-pocket l"></div>
+    <div class="env-pocket r"></div>
+    <div class="env-pocket b"></div>
 
     <!-- flap (hinged at the top) carrying the wax seal -->
     <div class="env-flap-wrap">
       <div class="env-flap">
-        <svg class="sprig sprig--f1" viewBox="0 0 60 200" aria-hidden="true"><use href="#sprigShape"/></svg>
-        <svg class="sprig sprig--f2" viewBox="0 0 60 200" aria-hidden="true"><use href="#sprigShape"/></svg>
+        
+        
       </div>
       <div class="env-flap-inner" aria-hidden="true"></div>
       <span class="seal" aria-hidden="true">
@@ -1162,6 +1098,32 @@ if(opener){
   const rootEl  = document.documentElement;
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const T = reduced ? [0, 120, 260, 520, 900] : [1450, 2550, 4400, 5400];   // ms marks
+
+  /* Map the source artwork onto the viewport so the fold clips and the seal
+     stay pixel-aligned with the photographic layers at any size. */
+  const SRC    = { w: 699, h: 1252 };     // envelope artwork pixel size
+  const CREASE = { x: 350, y: 600 };      // where the folds meet (source px)
+  const SEAL   = { x: 350, y: 628, box: 312, dia: 236 };   // seal cut-out + seal diameter
+  const layoutEnvelope = () => {
+    const box = document.querySelector(".envelope");
+    if(!box) return;
+    const W = box.clientWidth, H = box.clientHeight;
+    const s  = Math.max(W / SRC.w, H / SRC.h);            // background-size:cover
+    const ox = (W - SRC.w * s) / 2, oy = (H - SRC.h * s) / 2;
+    const px = x => ((ox + x * s) / W * 100).toFixed(4) + "%";
+    const py = y => ((oy + y * s) / H * 100).toFixed(4) + "%";
+    const st = document.documentElement.style;
+    st.setProperty("--flap", `polygon(${px(0)} ${py(0)}, ${px(CREASE.x)} ${py(CREASE.y)}, ${px(SRC.w)} ${py(0)})`);
+    st.setProperty("--pk-l", `polygon(${px(0)} ${py(0)}, ${px(CREASE.x)} ${py(CREASE.y)}, ${px(0)} ${py(SRC.h)})`);
+    st.setProperty("--pk-r", `polygon(${px(SRC.w)} ${py(0)}, ${px(CREASE.x)} ${py(CREASE.y)}, ${px(SRC.w)} ${py(SRC.h)})`);
+    st.setProperty("--pk-b", `polygon(${px(0)} ${py(SRC.h)}, ${px(CREASE.x)} ${py(CREASE.y)}, ${px(SRC.w)} ${py(SRC.h)})`);
+    st.setProperty("--seal-x", px(SEAL.x));
+    st.setProperty("--seal-y", py(SEAL.y));
+    st.setProperty("--seal-w", (SEAL.box * s / W * 100).toFixed(4) + "%");
+    st.setProperty("--seal-fs", (SEAL.dia * s * 0.30).toFixed(1) + "px");
+  };
+  layoutEnvelope();
+  window.addEventListener("resize", layoutEnvelope);
   rootEl.classList.add("intro-locked");               // no scrolling behind the veil
   let opened = false;
 
