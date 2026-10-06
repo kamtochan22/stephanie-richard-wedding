@@ -8,7 +8,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23000'/%3E%3Ctext x='32' y='40' font-family='Georgia,serif' font-size='22' letter-spacing='2' fill='%23fff' text-anchor='middle'%3ES%26amp;R%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Great+Vibes&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Great+Vibes&family=Pinyon+Script&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
 /* ============================================================
@@ -570,21 +570,85 @@ body.expand .env-back,body.expand .env-pocket,body.expand .env-flap,
 body.expand .env-flap-inner,body.expand .env-cast{
   opacity:0;transition:opacity .55s ease}
 
-/* --- photographic wax seal (cut out of the render) with a gold script monogram --- */
+/* --- wax seal: ivory pour + raised rim + gold-foil script monogram (S & R) --- */
 .seal{
   position:absolute;left:var(--seal-x,50%);top:var(--seal-y,50%);z-index:7;
-  width:var(--seal-w,34%);aspect-ratio:1;display:grid;place-items:center;
+  width:var(--seal-w,34%);aspect-ratio:1;display:block;
   transform:translate(-50%,-50%);
-  transition:opacity .32s ease .72s,transform .32s ease .72s;
+  transition:opacity .32s ease .7s,transform .32s ease .7s;
 }
-.seal-img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.seal-svg{display:block;width:100%;height:100%;overflow:visible}
 .seal-mono{
-  position:relative;font-family:'Great Vibes',cursive;letter-spacing:.01em;
-  font-size:var(--seal-fs,1.1rem);line-height:1;
-  color:#D8B878;
-  text-shadow:0 1px 0 rgba(255,255,255,.5),0 -1px 1px rgba(118,90,40,.5);
+  font-family:'Pinyon Script',cursive;font-size:43px;letter-spacing:-.5px;
+  paint-order:stroke;stroke:rgba(140,112,52,.20);stroke-width:.5;
 }
-body.opening .seal{opacity:0;transform:translate(-50%,-50%) scale(.96)}
+body.opening .seal{opacity:0;transform:translate(-50%,-50%) scale(1.06)}
+
+/* --- the light that pours out of the envelope the moment it opens --- */
+.env-burst{
+  position:absolute;left:var(--seal-x,50%);top:var(--seal-y,50%);z-index:8;
+  width:var(--seal-w,34%);aspect-ratio:1;transform:translate(-50%,-50%);
+  pointer-events:none;opacity:0;
+}
+body.opening .env-burst{animation:burstOut 1.9s cubic-bezier(.22,.7,.3,1) .1s forwards}
+@keyframes burstOut{
+  0%  {opacity:0;transform:translate(-50%,-50%) scale(.28)}
+  14% {opacity:1;transform:translate(-50%,-50%) scale(.72)}
+  38% {opacity:.9;transform:translate(-50%,-50%) scale(1)}
+  70% {opacity:.35;transform:translate(-50%,-50%) scale(1.35)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(1.75)}
+}
+.burst-glow{
+  position:absolute;inset:-42%;border-radius:50%;
+  background:radial-gradient(circle,
+    rgba(255,255,252,.98) 0%,rgba(255,248,228,.94) 14%,
+    rgba(255,236,190,.62) 32%,rgba(252,222,164,.26) 52%,rgba(246,206,140,0) 76%);
+  filter:blur(1.5px);
+}
+.burst-core{
+  position:absolute;left:50%;top:50%;width:26%;aspect-ratio:1;border-radius:50%;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(circle,rgba(255,255,255,1) 0%,rgba(255,252,240,.95) 42%,rgba(255,236,190,0) 78%);
+  filter:blur(3px);
+}
+.burst-rays{
+  position:absolute;inset:-62%;border-radius:50%;
+  background:repeating-conic-gradient(from 0deg,
+    rgba(255,255,255,0) 0deg 5.5deg,
+    rgba(255,255,255,.92) 5.5deg 8.5deg,
+    rgba(255,252,242,.55) 8.5deg 10.5deg,
+    rgba(255,255,255,0) 10.5deg 17deg);
+  -webkit-mask-image:radial-gradient(circle,rgba(0,0,0,.98) 6%,rgba(0,0,0,.72) 26%,rgba(0,0,0,.28) 48%,rgba(0,0,0,0) 70%);
+  mask-image:radial-gradient(circle,rgba(0,0,0,.98) 6%,rgba(0,0,0,.72) 26%,rgba(0,0,0,.28) 48%,rgba(0,0,0,0) 70%);
+  animation:raysTurn 9s linear infinite;
+}
+.burst-shaft{
+  position:absolute;left:50%;bottom:44%;width:52%;height:120%;
+  transform:translateX(-50%);
+  background:linear-gradient(0deg,rgba(255,255,250,.95) 0%,rgba(255,246,216,.55) 34%,rgba(255,240,200,.16) 66%,rgba(255,240,200,0) 100%);
+  -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 26%,#000 74%,transparent 100%);
+  mask-image:linear-gradient(90deg,transparent 0%,#000 26%,#000 74%,transparent 100%);
+  filter:blur(9px);
+}
+@keyframes raysTurn{to{transform:rotate(360deg)}}
+.burst-spark{
+  position:absolute;left:50%;top:50%;width:2.6%;aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,250,1) 0%,rgba(255,238,196,.85) 45%,rgba(255,232,180,0) 72%);
+  opacity:0;
+}
+body.opening .burst-spark{animation:sparkOut 1.5s ease-out .16s forwards}
+@keyframes sparkOut{
+  0%  {opacity:0;transform:translate(-50%,-50%) scale(.2)}
+  22% {opacity:1}
+  100%{opacity:0;transform:translate(calc(-50% + var(--sx,0px)),calc(-50% + var(--sy,0px))) scale(1)}
+}
+.burst-spark.s1{--sx:-34vmin;--sy:-24vmin;animation-delay:.16s}
+.burst-spark.s2{--sx: 30vmin;--sy:-30vmin;animation-delay:.22s}
+.burst-spark.s3{--sx:-26vmin;--sy: 26vmin;animation-delay:.30s}
+.burst-spark.s4{--sx: 34vmin;--sy: 18vmin;animation-delay:.26s}
+.burst-spark.s5{--sx:  6vmin;--sy:-38vmin;animation-delay:.34s}
+.burst-spark.s6{--sx:-14vmin;--sy: 34vmin;animation-delay:.20s}
+@media (prefers-reduced-motion:reduce){.env-burst,.burst-spark,.burst-rays{animation:none!important;opacity:0!important}}
 
 .open-hint{position:absolute;left:0;right:0;bottom:2.6svh;text-align:center;
   font-family:var(--sans);font-size:.54rem;letter-spacing:.34em;
@@ -645,10 +709,55 @@ html.intro-locked{overflow:hidden}
       </div>
       <div class="env-flap-inner" aria-hidden="true"></div>
       <span class="seal" aria-hidden="true">
-        <img class="seal-img" src="textures/seal.png" alt="">
-        <span class="seal-mono">S <em>&amp;</em> R</span>
+        <svg class="seal-svg" viewBox="0 0 200 200" role="presentation">
+          <defs>
+            <radialGradient id="sgBody" cx="38%" cy="30%" r="80%">
+              <stop offset="0%" stop-color="#FCF9F1"/><stop offset="58%" stop-color="#F1E9D9"/>
+              <stop offset="86%" stop-color="#E2D7C0"/><stop offset="100%" stop-color="#D3C6A9"/>
+            </radialGradient>
+            <linearGradient id="sgRim" x1="22%" y1="2%" x2="78%" y2="98%">
+              <stop offset="0%" stop-color="#FFFDF8"/><stop offset="40%" stop-color="#F4EDDE"/>
+              <stop offset="72%" stop-color="#DFD3BA"/><stop offset="100%" stop-color="#C9B994"/>
+            </linearGradient>
+            <radialGradient id="sgPlate" cx="44%" cy="38%" r="72%">
+              <stop offset="0%" stop-color="#F9F4E8"/><stop offset="72%" stop-color="#EFE7D6"/>
+              <stop offset="100%" stop-color="#E4DAC6"/>
+            </radialGradient>
+            <linearGradient id="sgGold" x1="12%" y1="0%" x2="62%" y2="100%">
+              <stop offset="0%" stop-color="#F5E8BE"/><stop offset="30%" stop-color="#D9B86F"/>
+              <stop offset="62%" stop-color="#AE8A42"/><stop offset="82%" stop-color="#C9A75C"/>
+              <stop offset="100%" stop-color="#EEDDA9"/>
+            </linearGradient>
+            <filter id="sgSoft" x="-30%" y="-30%" width="160%" height="160%">
+              <feDropShadow dx="1.1" dy="2.6" stdDeviation="2.3" flood-color="#6b5a3a" flood-opacity=".30"/>
+            </filter>
+          </defs>
+          <g filter="url(#sgSoft)">
+            <path d="M188.15,100.00 C188.17,107.78 182.25,115.66 179.52,123.35 C176.80,131.04 175.60,139.13 171.80,146.14 C168.00,153.16 162.95,160.58 156.72,165.45 C150.48,170.32 141.84,172.18 134.42,175.36 C126.99,178.54 119.95,182.81 112.16,184.55 C104.36,186.29 95.38,187.44 87.66,185.81 C79.94,184.18 73.39,178.01 65.85,174.79 C58.30,171.56 48.49,171.37 42.39,166.48 C36.29,161.60 33.00,152.63 29.24,145.47 C25.49,138.31 22.59,131.11 19.87,123.53 C17.14,115.95 12.94,107.86 12.87,100.00 C12.80,92.14 16.73,83.94 19.44,76.35 C22.15,68.75 25.27,61.55 29.12,54.45 C32.98,47.35 36.43,38.55 42.57,33.72 C48.71,28.90 58.46,28.71 65.98,25.51 C73.50,22.30 80.01,16.18 87.71,14.51 C95.40,12.84 104.35,13.86 112.15,15.51 C119.95,17.16 127.06,21.28 134.51,24.42 C141.97,27.56 150.70,29.43 156.88,34.36 C163.05,39.29 167.81,46.95 171.57,54.01 C175.32,61.06 176.63,69.02 179.40,76.69 C182.16,84.35 188.13,92.22 188.15,100.00Z" fill="url(#sgRim)"/>
+            <path d="M170.52,100.00 C170.54,106.22 165.80,112.53 163.62,118.68 C161.44,124.83 160.48,131.30 157.44,136.91 C154.40,142.53 150.36,148.47 145.37,152.36 C140.39,156.26 133.47,157.74 127.53,160.29 C121.59,162.83 115.96,166.25 109.73,167.64 C103.49,169.03 96.30,169.95 90.13,168.65 C83.96,167.34 78.71,162.41 72.68,159.83 C66.64,157.25 58.80,157.09 53.91,153.18 C49.03,149.28 46.40,142.11 43.39,136.38 C40.39,130.65 38.08,124.89 35.89,118.82 C33.71,112.76 30.35,106.29 30.30,100.00 C30.24,93.71 33.39,87.15 35.55,81.08 C37.72,75.00 40.22,69.24 43.30,63.56 C46.38,57.88 49.14,50.84 54.06,46.98 C58.97,43.12 66.77,42.97 72.78,40.40 C78.80,37.84 84.01,32.94 90.17,31.61 C96.32,30.27 103.48,31.09 109.72,32.41 C115.96,33.73 121.65,37.03 127.61,39.54 C133.58,42.05 140.56,43.54 145.50,47.49 C150.44,51.43 154.25,57.56 157.25,63.21 C160.25,68.85 161.31,75.22 163.52,81.35 C165.73,87.48 170.50,93.78 170.52,100.00Z" fill="url(#sgBody)"/>
+            <circle cx="100" cy="100" r="55" fill="url(#sgPlate)"/>
+            <circle cx="100" cy="100" r="55.8" fill="none" stroke="rgba(150,128,92,.22)" stroke-width=".7"/>
+            <circle cx="100" cy="100" r="52.4" fill="none" stroke="rgba(150,128,92,.11)" stroke-width=".5"/>
+            <path d="M173.44,132.70 C172.83,134.68 171.45,140.83 169.75,144.60 C168.04,148.38 165.80,152.08 163.21,155.34 C160.62,158.60 157.74,161.98 154.22,164.17 C150.71,166.35 145.91,166.81 142.11,168.44 C138.30,170.08 134.98,172.00 131.40,173.97 C127.82,175.94 124.44,178.84 120.61,180.25 C116.77,181.66 112.49,181.81 108.37,182.43 C104.25,183.06 100.06,183.99 95.89,183.99 C91.73,183.99 87.24,183.94 83.38,182.43 C79.52,180.92 76.32,177.01 72.72,174.94 C69.13,172.87 65.88,171.18 61.82,170.02 C57.77,168.86 52.24,169.72 48.41,167.97 C44.58,166.21 41.29,162.90 38.83,159.49 C36.37,156.08 34.52,149.49 33.66,147.49" fill="none" stroke="url(#sgGold)" stroke-width="2.6"
+                  stroke-linecap="round" opacity=".9"/>
+          </g>
+          <text class="seal-mono" x="100" y="100" text-anchor="middle" dominant-baseline="central"
+                dx="0.9" dy="1.1" fill="rgba(120,94,44,.55)">S &amp; R</text>
+          <text class="seal-mono" x="100" y="100" text-anchor="middle" dominant-baseline="central"
+                dx="-0.7" dy="-0.9" fill="rgba(255,255,255,.6)">S &amp; R</text>
+          <text class="seal-mono" x="100" y="100" text-anchor="middle" dominant-baseline="central"
+                fill="url(#sgGold)">S &amp; R</text>
+        </svg>
+      </span>
       </span>
     </div>
+        <span class="env-burst" aria-hidden="true">
+          <span class="burst-shaft"></span><span class="burst-rays"></span>
+          <span class="burst-glow"></span><span class="burst-core"></span>
+          <span class="burst-spark s1"></span><span class="burst-spark s2"></span>
+          <span class="burst-spark s3"></span><span class="burst-spark s4"></span>
+          <span class="burst-spark s5"></span><span class="burst-spark s6"></span>
+        </span>
 
   </div>
 
@@ -1103,7 +1212,7 @@ if(opener){
      stay pixel-aligned with the photographic layers at any size. */
   const SRC    = { w: 699, h: 1252 };     // envelope artwork pixel size
   const CREASE = { x: 350, y: 600 };      // where the folds meet (source px)
-  const SEAL   = { x: 350, y: 628, box: 312, dia: 236 };   // seal cut-out + seal diameter
+  const SEAL   = { x: 350, y: 628, dia: 258 };   // seal diameter in source px
   const layoutEnvelope = () => {
     const box = document.querySelector(".envelope");
     if(!box) return;
@@ -1119,8 +1228,7 @@ if(opener){
     st.setProperty("--pk-b", `polygon(${px(0)} ${py(SRC.h)}, ${px(CREASE.x)} ${py(CREASE.y)}, ${px(SRC.w)} ${py(SRC.h)})`);
     st.setProperty("--seal-x", px(SEAL.x));
     st.setProperty("--seal-y", py(SEAL.y));
-    st.setProperty("--seal-w", (SEAL.box * s / W * 100).toFixed(4) + "%");
-    st.setProperty("--seal-fs", (SEAL.dia * s * 0.30).toFixed(1) + "px");
+    st.setProperty("--seal-w", (SEAL.dia * s / W * 100).toFixed(4) + "%");
   };
   layoutEnvelope();
   window.addEventListener("resize", layoutEnvelope);
