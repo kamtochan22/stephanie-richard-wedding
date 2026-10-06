@@ -468,9 +468,9 @@ body.opened .opener-veil{opacity:0;visibility:hidden;pointer-events:none}
 .envelope{position:relative;width:100%;height:100svh;transform-style:preserve-3d}
 .envelope::after{                                  /* real paper grain */
   content:"";position:absolute;inset:0;z-index:9;pointer-events:none;
-  background-image:url("textures/paper.png");
-  background-size:430px 430px;
-  mix-blend-mode:multiply;opacity:.6;
+  background-image:url("textures/paper-grain.png");
+  background-size:400px 400px;
+  mix-blend-mode:multiply;opacity:.32;
   transition:opacity .5s ease;
 }
 body.expand .envelope::after{opacity:0}
@@ -482,7 +482,9 @@ body.expand .envelope::after{opacity:0}
 /* --- the invitation card that sits inside the envelope --- */
 .card{
   position:absolute;left:7%;right:7%;bottom:4%;height:84%;z-index:2;
-  background:#FBF7F0;
+  background-image:url("textures/paper-grain.png");
+  background-size:400px 400px;background-blend-mode:multiply;
+  background-color:#FBF7F0;
   border:1px solid rgba(70,55,35,.10);border-radius:2px;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   box-shadow:0 14px 30px -8px rgba(70,55,35,.16);
@@ -527,13 +529,16 @@ body.revealed .card-meta {opacity:1;transform:none;transition-delay:.58s}
        embossed with white-on-white vinework (as in the reference) --- */
 .env-pocket{position:absolute;inset:0;z-index:3;overflow:hidden}
 .env-pocket.l{clip-path:polygon(0 0,50% 47%,0 100%);
-  background:linear-gradient(100deg,#F8F9FB 0%,#FCFCFD 34%,#FEFEFF 100%);
+  background-image:url("textures/paper-grain.png"),linear-gradient(100deg,#F8F9FB,#FCFCFD 34%,#FEFEFF);
+  background-size:400px 400px,100% 100%;background-blend-mode:multiply,normal;
   filter:drop-shadow(0 1px 7px rgba(58,64,88,.26))}
 .env-pocket.r{clip-path:polygon(100% 0,50% 47%,100% 100%);
-  background:linear-gradient(260deg,#F8F9FB 0%,#FCFCFD 34%,#FEFEFF 100%);
+  background-image:url("textures/paper-grain.png"),linear-gradient(260deg,#F8F9FB,#FCFCFD 34%,#FEFEFF);
+  background-size:400px 400px,100% 100%;background-blend-mode:multiply,normal;
   filter:drop-shadow(0 1px 7px rgba(58,64,88,.26))}
 .env-pocket.b{clip-path:polygon(0 100%,50% 47%,100% 100%);
-  background:linear-gradient(0deg,#F5F6F9 0%,#FBFBFC 30%,#FEFEFF 100%);
+  background-image:url("textures/paper-grain.png"),linear-gradient(0deg,#F5F6F9,#FBFBFC 30%,#FEFEFF);
+  background-size:400px 400px,100% 100%;background-blend-mode:multiply,normal;
   filter:drop-shadow(0 -1px 8px rgba(58,64,88,.28))}
 .sprig{position:absolute;color:#FDFDFE;width:min(30vmin,170px);
   filter:drop-shadow(.6px 1.1px 1.3px rgba(58,64,88,.24)) drop-shadow(-.5px -.7px .9px rgba(255,255,255,.98))}
@@ -564,11 +569,13 @@ body.opening .env-flap-wrap{animation:flapOpen 1.35s cubic-bezier(.32,.06,.28,1)
   -webkit-backface-visibility:hidden;backface-visibility:hidden;
 }
 .env-flap{
-  background:linear-gradient(180deg,#FDFDFE 0%,#F5F6F9 62%,#ECEFF4 100%);
+  background-image:url("textures/paper-grain.png"),linear-gradient(180deg,#FDFDFE,#F5F6F9 62%,#ECEFF4);
+  background-size:400px 400px,100% 100%;background-blend-mode:multiply,normal;
   filter:drop-shadow(0 2px 6px rgba(58,64,88,.20));
 }
 .env-flap-inner{                                   /* underside of the flap */
-  background:linear-gradient(0deg,#E6E9F0 0%,#F2F4F8 48%,#FBFCFD 100%);
+  background-image:url("textures/paper-grain.png"),linear-gradient(0deg,#E6E9F0,#F2F4F8 48%,#FBFCFD);
+  background-size:400px 400px,100% 100%;background-blend-mode:multiply,normal;
   transform-origin:50% 0;
   transform:translateZ(.3px) rotateX(180deg);
   filter:drop-shadow(0 -2px 9px rgba(58,64,88,.22));
@@ -592,17 +599,18 @@ body.expand .env-flap-inner{
 /* --- scalloped wax seal with a gold script monogram --- */
 .seal{
   position:absolute;left:50%;top:47%;transform:translate(-50%,-50%);
-  width:clamp(88px,27vmin,150px);height:clamp(88px,27vmin,150px);
+  width:clamp(80px,23vmin,132px);height:clamp(80px,23vmin,132px);
   display:grid;place-items:center;
   filter:drop-shadow(0 5px 9px rgba(70,55,35,.26));
   transition:opacity .32s ease .72s,transform .32s ease .72s;   /* fades as the flap passes upright */
 }
-.seal-body{position:absolute;inset:0;width:100%;height:100%}
+.seal-img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
+  filter:drop-shadow(0 3px 6px rgba(58,64,88,.20))}
 .seal-mono{
-  position:relative;font-family:'Great Vibes',cursive;letter-spacing:.01em;
-  font-size:clamp(1.05rem,5.4vmin,1.85rem);
-  color:#C0A05C;
-  text-shadow:0 1px 0 rgba(255,255,255,.7),0 -1px 0 rgba(120,95,45,.28);
+  position:relative;font-family:'Great Vibes',cursive;letter-spacing:.02em;
+  font-size:clamp(.82rem,3.6vmin,1.25rem);
+  color:#C3A468;
+  text-shadow:0 1px 0 rgba(255,255,255,.6),0 -1px 1px rgba(110,88,42,.42);
 }
 body.opening .seal{opacity:0;transform:translate(-50%,-50%) scale(.9)}
 
@@ -701,21 +709,7 @@ html.intro-locked{overflow:hidden}
       </div>
       <div class="env-flap-inner" aria-hidden="true"></div>
       <span class="seal" aria-hidden="true">
-        <svg class="seal-body" viewBox="0 0 100 100">
-          <defs>
-            <radialGradient id="sealFill" cx="36%" cy="30%" r="78%">
-              <stop offset="0%"   stop-color="#FEFCF8"/>
-              <stop offset="56%"  stop-color="#F7F2E7"/>
-              <stop offset="100%" stop-color="#EBE3D3"/>
-            </radialGradient>
-          </defs>
-          <path d="M50.00,12.00A20.00,20.00 0 0 1 69.00,17.09A20.00,20.00 0 0 1 82.91,31.00A20.00,20.00 0 0 1 88.00,50.00A20.00,20.00 0 0 1 82.91,69.00A20.00,20.00 0 0 1 69.00,82.91A20.00,20.00 0 0 1 50.00,88.00A20.00,20.00 0 0 1 31.00,82.91A20.00,20.00 0 0 1 17.09,69.00A20.00,20.00 0 0 1 12.00,50.00A20.00,20.00 0 0 1 17.09,31.00A20.00,20.00 0 0 1 31.00,17.09A20.00,20.00 0 0 1 50.00,12.00Z"
-                fill="url(#sealFill)"/>
-          <path d="M50.00,12.00A20.00,20.00 0 0 1 69.00,17.09A20.00,20.00 0 0 1 82.91,31.00A20.00,20.00 0 0 1 88.00,50.00A20.00,20.00 0 0 1 82.91,69.00A20.00,20.00 0 0 1 69.00,82.91A20.00,20.00 0 0 1 50.00,88.00A20.00,20.00 0 0 1 31.00,82.91A20.00,20.00 0 0 1 17.09,69.00A20.00,20.00 0 0 1 12.00,50.00A20.00,20.00 0 0 1 17.09,31.00A20.00,20.00 0 0 1 31.00,17.09A20.00,20.00 0 0 1 50.00,12.00Z"
-                fill="none" stroke="rgba(70,55,35,.13)" stroke-width=".7"/>
-          <circle cx="50" cy="50" r="30.5" fill="none" stroke="rgba(165,136,86,.26)" stroke-width=".7"/>
-          <circle cx="50" cy="50" r="29"   fill="none" stroke="rgba(165,136,86,.14)" stroke-width=".5"/>
-        </svg>
+        <img class="seal-img" src="textures/seal.png" alt="">
         <span class="seal-mono">S <em>&amp;</em> R</span>
       </span>
     </div>
