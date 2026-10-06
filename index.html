@@ -520,7 +520,9 @@ body.expand .env-throat{opacity:0}
   border-radius:1px;pointer-events:none;transition:opacity .6s ease}
 body.opening .card{transform:translateY(-4%)}
 body.expand  .card{transform:translate(var(--tx,0px),var(--ty,0px)) scale(var(--k,1));
-  border-radius:0;border-color:transparent;box-shadow:none}
+  border-radius:0;border-color:transparent;box-shadow:none;
+  transition:transform 1.05s cubic-bezier(.34,0,.18,1) 0s,border-radius .8s ease .2s,
+             border-color .6s ease .2s,box-shadow .6s ease .2s}
 body.expand  .card::after{opacity:0}
 
 /* the wording lives on its own layer so it never scales with the card —
@@ -608,7 +610,7 @@ body.opening .env-cast{animation:castSweep 1.35s cubic-bezier(.32,.06,.28,1) for
 }
 body.expand .env-back,body.expand .env-pocket,body.expand .env-flap,
 body.expand .env-flap-inner,body.expand .env-cast{
-  opacity:0;transition:opacity .55s ease}
+  opacity:0;transition:opacity .45s ease .85s}   /* only once the card covers the frame */
 
 /* --- wax seal: ivory pour + raised rim + gold-foil script monogram (S & R) --- */
 .seal{
