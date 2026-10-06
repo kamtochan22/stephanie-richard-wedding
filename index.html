@@ -564,7 +564,7 @@ body.revealed .card-meta {opacity:1;transform:none;transition-delay:.58s}
 .env-pocket::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;
   background:linear-gradient(112deg,rgba(72,60,42,.30) 0%,rgba(72,60,42,.07) 20%,rgba(255,255,255,.10) 34%,transparent 52%)}
 body.opening .env-pocket::after{animation:curlShade 2.1s ease .15s forwards}
-@keyframes curlShade{0%{opacity:0}28%{opacity:.85}70%{opacity:.5}100%{opacity:.15}}
+@keyframes curlShade{0%{opacity:0}30%{opacity:.35}100%{opacity:0}}
 
 /* --- the flap: photographic artwork hinged on the top edge --------------- */
 .env-flap-wrap{
@@ -572,33 +572,25 @@ body.opening .env-pocket::after{animation:curlShade 2.1s ease .15s forwards}
   transform-origin:50% 100%;
 }
 /* opening: the four folds are pushed outward, gently and visibly, then fade */
-body.opening .env-flap-wrap{animation:awayUp 2.1s cubic-bezier(.46,.04,.24,1) .15s forwards}
-@keyframes awayUp{                        /* top fold: lifts up and tips away */
-  0%  {transform:translate(0,0) rotate(0deg) skewX(0deg);opacity:1}
-  25% {transform:translate(-1.5%,-16%) rotate(-.5deg) skewX(-1.2deg);opacity:1}
-  62% {transform:translate(-3%,-52%) rotate(-1.2deg) skewX(-2deg);opacity:.92}
-  100%{transform:translate(-4%,-92%) rotate(-1.8deg) skewX(-2.6deg);opacity:0}
+body.opening .env-flap-wrap{animation:awayUp 2.1s cubic-bezier(.42,0,.32,1) .15s forwards}
+@keyframes awayUp{                        /* top piece: straight up */
+  0%  {transform:translate(0,0)}
+  100%{transform:translate(0,-101%)}
 }
-body.opening .env-pocket.l{animation:awayLeft 2.1s cubic-bezier(.46,.04,.24,1) .15s forwards}
-@keyframes awayLeft{                      /* left fold: slides out, tipping over its crease */
-  0%  {transform:translate(0,0) rotate(0deg) skewY(0deg);opacity:1}
-  25% {transform:translate(-18%,.5%) rotate(-.5deg) skewY(-1.4deg);opacity:1}
-  62% {transform:translate(-58%,1.5%) rotate(-1.2deg) skewY(-2.4deg);opacity:.92}
-  100%{transform:translate(-92%,2.5%) rotate(-1.7deg) skewY(-3deg);opacity:0}
+body.opening .env-pocket.l{animation:awayLeft 2.1s cubic-bezier(.42,0,.32,1) .15s forwards}
+@keyframes awayLeft{                      /* left piece: straight left */
+  0%  {transform:translate(0,0)}
+  100%{transform:translate(-101%,0)}
 }
-body.opening .env-pocket.r{animation:awayRight 2.1s cubic-bezier(.46,.04,.24,1) .15s forwards}
-@keyframes awayRight{
-  0%  {transform:translate(0,0) rotate(0deg) skewY(0deg);opacity:1}
-  25% {transform:translate(18%,.5%) rotate(.5deg) skewY(1.4deg);opacity:1}
-  62% {transform:translate(58%,1.5%) rotate(1.2deg) skewY(2.4deg);opacity:.92}
-  100%{transform:translate(92%,2.5%) rotate(1.7deg) skewY(3deg);opacity:0}
+body.opening .env-pocket.r{animation:awayRight 2.1s cubic-bezier(.42,0,.32,1) .15s forwards}
+@keyframes awayRight{                     /* right piece: straight right */
+  0%  {transform:translate(0,0)}
+  100%{transform:translate(101%,0)}
 }
-body.opening .env-pocket.b{animation:awayDown 2.1s cubic-bezier(.46,.04,.24,1) .15s forwards}
-@keyframes awayDown{                      /* bottom fold */
-  0%  {transform:translate(0,0) rotate(0deg) skewX(0deg);opacity:1}
-  25% {transform:translate(0,16%) rotate(0deg) skewX(1.2deg);opacity:1}
-  62% {transform:translate(0,54%) rotate(.6deg) skewX(2deg);opacity:.92}
-  100%{transform:translate(0,94%) rotate(1deg) skewX(2.6deg);opacity:0}
+body.opening .env-pocket.b{animation:awayDown 2.1s cubic-bezier(.42,0,.32,1) .15s forwards}
+@keyframes awayDown{                      /* bottom piece: straight down */
+  0%  {transform:translate(0,0)}
+  100%{transform:translate(0,101%)}
 }
 .env-flap,.env-flap-inner{
   position:absolute;inset:0;overflow:hidden;
