@@ -232,11 +232,13 @@ body.menu-open .menu-group.sub .sub-link:nth-child(2){transition-delay:.36s}
 @media (max-width:900px){
   .hero{display:block;padding-inline:0}
   .hero-media{position:absolute;inset:0;height:100%;width:100%;aspect-ratio:auto;max-width:none}
-  .hero-media img,.hero-media .ph{object-position:50% 32%}
-  .hero-shade{display:block;position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 42%,rgba(0,0,0,.58) 100%)}
-  .hero-caption{position:absolute;left:0;right:0;bottom:0;padding:0 1.4rem 2.4rem;color:var(--text-inverse)}
+  .hero-media img,.hero-media .ph{object-position:50% 50%}
+  /* caption lives in the empty sky at the TOP so the couple lower in the frame is never covered */
+  .hero-shade{display:block;position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(7,20,36,.50) 0%,rgba(7,20,36,.24) 24%,rgba(7,20,36,.05) 42%,rgba(7,20,36,0) 56%)}
+  .hero-caption{position:absolute;left:0;right:0;top:0;bottom:auto;padding:1.3rem 1.4rem 0;text-align:center;color:var(--text-inverse)}
   .hero-caption .micro{color:rgba(255,255,255,.82);text-shadow:0 1px 10px rgba(0,0,0,.45)}
-  .hero-caption h1{color:var(--text-inverse);font-size:clamp(1.9rem,8vw,2.9rem);text-shadow:0 2px 24px rgba(0,0,0,.35)}
+  .hero-caption h1{color:var(--text-inverse);font-size:clamp(1.7rem,7vw,2.4rem);margin:.8rem 0 1rem;text-shadow:0 2px 22px rgba(0,0,0,.42)}
   .hero-caption h1 .amp{color:rgba(255,255,255,.85)}
   .hero-caption .date hr{background:rgba(255,255,255,.5);opacity:1}
   .hero-caption .date .micro{color:var(--text-inverse);text-shadow:0 1px 10px rgba(0,0,0,.45)}
