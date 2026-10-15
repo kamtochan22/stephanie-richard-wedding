@@ -8,6 +8,14 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23000'/%3E%3Ctext x='32' y='40' font-family='Georgia,serif' font-size='22' letter-spacing='2' fill='%23fff' text-anchor='middle'%3ES%26amp;R%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<script>
+/* ?skipenvelope=1 — this page is being embedded inside another site (e.g. the Adrien
+   birthday page) which supplies its own envelope, so drop ours and don't lock scroll.
+   Absent the param, behaviour is exactly as before. */
+if (/[?&#]skipenvelope=1/.test(location.search + location.hash)) {
+  document.documentElement.className += ' skip-envelope';
+}
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Great+Vibes&family=Pinyon+Script&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
@@ -465,6 +473,7 @@ body.menu-open .menu-group.sub .sub-link:nth-child(2){transition-delay:.36s}
   transition:opacity .9s cubic-bezier(.23,1,.32,1),visibility .9s;
 }
 body.opened .opener-veil{opacity:0;visibility:hidden;pointer-events:none}
+html.skip-envelope .opener-veil{display:none!important}
 .opener-veil:focus,.opener-veil:focus-visible{outline:none}
 .opener-veil:focus-visible .open-hint{color:#8A7C64}
 
@@ -1306,7 +1315,8 @@ form.addEventListener("submit", async e => {
    Timeline: tap → flap folds up (1.15s) → card scales to fill the
    screen → script names fade in → veil lifts onto the site.
    ============================================================ */
-const opener = document.getElementById("opener");
+const opener = document.documentElement.classList.contains("skip-envelope")
+  ? null : document.getElementById("opener");
 if(opener){
   const rootEl  = document.documentElement;
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
