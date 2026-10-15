@@ -422,9 +422,12 @@ body.menu-open .menu-group.sub .sub-link:nth-child(2){transition-delay:.36s}
 }
 .btn:hover:not(:disabled){background:var(--bg-primary);color:var(--text-primary)}
 .btn:disabled{opacity:.5;cursor:wait}
-.form-status{margin-top:1.2rem;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;display:flex;align-items:center;gap:.8rem}
+.form-status{margin-top:1.2rem;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;display:flex;align-items:center;gap:.8rem;flex-wrap:wrap}
 .form-status .ok{color:var(--accent)}
 .form-status .err{color:var(--accent)}
+.form-status .pend{color:var(--text-primary);opacity:.55}
+/* longer sentences lose the all-caps tracking so they stay readable */
+.form-status .wide{text-transform:none;letter-spacing:normal;font-size:.8rem;line-height:1.8;text-align:left}
 @media (max-width:900px){.rsvp-intro,.rsvp-form{grid-column:1 / -1;position:static}}
 @media (max-width:700px){.radio-group{flex-direction:column}.radio-pill{min-width:0}}
 
@@ -1261,6 +1264,41 @@ const form = document.getElementById("rsvpForm");
 const statusEl = document.getElementById("formStatus");
 const btn = document.getElementById("rsvpBtn");
 
+/* ------------------------------------------------------------------
+   Why the confirmation step exists
+   The POST has to be mode:"no-cors", so the browser gets an OPAQUE
+   response — it cannot tell success from failure. Saying "Thank you" on
+   an opaque response is a lie waiting to happen (Apps Script down, quota
+   gone, request dropped). So after sending we ASK THE SERVER whether the
+   row with our key is really in the Sheet (?action=rsvpcheck + JSONP),
+   and only then do we thank anyone.
+   `pendingKey` persists across a retry, so tapping "Try again" re-uses
+   the same key — the server de-dupes on it and can never double-book.
+   ------------------------------------------------------------------ */
+let pendingKey = null;
+
+function makeRsvpKey(){
+  return "k" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+
+function rsvpConfirm(key, cb){
+  const fn = "rsvpCb" + Math.random().toString(36).slice(2, 9);
+  const s  = document.createElement("script");
+  let settled = false;
+  const finish = data => {
+    if (settled) return;
+    settled = true;
+    try { delete window[fn]; } catch(e) { window[fn] = undefined; }
+    s.remove();
+    cb(data);
+  };
+  window[fn] = data => finish(data);
+  s.onerror = () => finish(null);
+  s.src = WEBHOOK_URL + "?action=rsvpcheck&key=" + encodeURIComponent(key) + "&cb=" + fn;
+  document.head.appendChild(s);
+  setTimeout(() => finish(null), 7000);
+}
+
 form.addEventListener("submit", async e => {
   e.preventDefault();
 
@@ -1275,6 +1313,8 @@ form.addEventListener("submit", async e => {
     return;
   }
 
+  if (!pendingKey) pendingKey = makeRsvpKey();
+
   const payload = {
     name, email,
     attendance,
@@ -1282,12 +1322,12 @@ form.addEventListener("submit", async e => {
     diet:   attendance === "joyfully-accepts" ? form.diet.value.trim()  : "",
     note:   form.note.value.trim(),
     source: "wedding-site",
-    key:    "k" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8)
+    key:    pendingKey
   };
 
   btn.disabled = true;
   btn.textContent = "Sending…";
-  statusEl.innerHTML = "";
+  statusEl.innerHTML = '<span class="pend">Sending your response…</span>';
 
   // the response is opaque (no-cors), so aim the same payload 3 times —
   // the server de-dupes on `key`, so a re-send can never create a second row
@@ -1298,23 +1338,45 @@ form.addEventListener("submit", async e => {
     body: JSON.stringify(payload)
   }).catch(() => {});
 
-  try {
-    await send();
-    setTimeout(send, 6000);
-    setTimeout(send, 18000);
-    // response is opaque — data IS written (see README pitfalls)
+  const succeed = () => {
+    pendingKey = null;
     form.reset();
     document.getElementById("guestsRow").classList.add("hidden");
     document.getElementById("dietRow").classList.add("hidden");
     attGroup.querySelectorAll(".radio-pill").forEach(p => p.classList.remove("on"));
     attendance = "";
-    btn.textContent = "Send response";
-    statusEl.innerHTML = '<span class="ok" style="color:var(--text-primary)">✓ Thank you — your response has been received.</span>';
-  } catch(err) {
     btn.disabled = false;
     btn.textContent = "Send response";
-    statusEl.innerHTML = '<span class="err">✕ Please check your connection and try again</span>';
-  }
+    statusEl.innerHTML = '<span class="ok wide" style="color:var(--text-primary)">✓ Thank you — your response has been received.</span>';
+  };
+
+  const giveUp = () => {
+    btn.disabled = false;
+    btn.textContent = "Try again";
+    statusEl.innerHTML = '<span class="err wide">✕ We could not confirm your response reached us. '
+      + 'Please tap “Try again”, or message us directly — we would hate to miss you.</span>';
+  };
+
+  send();
+  setTimeout(send, 5000);
+  setTimeout(send, 12000);
+
+  let done = false;
+  const check = () => {
+    if (done) return;
+    rsvpConfirm(pendingKey, data => {
+      if (done) return;
+      if (data && data.found) {                  // the row IS in the Sheet
+        done = true;
+        statusEl.innerHTML = '<span class="pend">Confirmed — one moment…</span>';
+        setTimeout(succeed, 500);
+      } else if (data && data.ok) {              // server answered, row not there yet
+        statusEl.innerHTML = '<span class="pend">Checking your response…</span>';
+      }                                        // null = unreachable; keep trying
+    });
+  };
+  [1500, 4000, 8000, 13000, 18000].forEach(t => setTimeout(check, t));
+  setTimeout(() => { if (!done) { done = true; giveUp(); } }, 22000);
 });
 
 /* ============================================================
